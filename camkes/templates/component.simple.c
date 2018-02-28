@@ -218,6 +218,11 @@ static int simple_camkes_cap_count(void *data) {
     return /*? len(untyped_obj_list) + mmio_caps_len[0] + len(ioports) + len(iospaces) + len(untyped_mmio) + 3 ?*/;
 }
 
+static int simple_camkes_core_count(void *data)
+{
+    return 1;
+}
+
 static seL4_CPtr simple_camkes_nth_untyped(void *data, int n, size_t *size_bits, uintptr_t *paddr, bool *device) {
     camkes_simple_data_t *camkes = (camkes_simple_data_t *)data;
     if (size_bits) {
@@ -476,7 +481,7 @@ static seL4_Word camkes_simple_arch_info(void *data) {
     return word;
 }
 
-static UNUSED seL4_CPtr camkes_simple_sched_ctrl(void *data, seL4_Word core) {
+static UNUSED seL4_CPtr camkes_simple_sched_ctrl(void *data, int core) {
     /*- if 'sched_ctrl' in configuration[me.name].keys() -*/
     if (core == /*? configuration[me.name].get('sched_ctrl') ?*/) {
         return /*? sched_control ?*/;
@@ -514,6 +519,7 @@ void camkes_make_simple(simple_t *simple) {
     simple->frame_mapping = /*&simple_camkes_get_frame_mapping*/NULL;
     simple->ASID_assign = &simple_camkes_set_ASID;
     simple->cap_count = &simple_camkes_cap_count;
+    simple->core_count = &simple_camkes_core_count;
     simple->nth_cap = &simple_camkes_nth_cap;
     simple->init_cap = &simple_camkes_init_cap;
     simple->cnode_size = &simple_camkes_cnode_size;
